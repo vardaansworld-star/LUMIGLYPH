@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"content="width=device-width,initial-scale=1.0">
+    <title>CharSketch - Interactive ASCII</title>
+    <style>
+        /* Modern Interactive Dark Theme Variables */
+        :root {
+            --bg-void:#09090b;          /* Deep void background */
+            --surface:rgba(255, 255, 255, 0.03); /* Translucent cards */
+            --surface-hover:rgba(255, 255, 255, 0.06);
+            --border-color:rgba(255, 255, 255, 0.1);
+            --border-highlight:rgba(255, 255, 255, 0.2);
+            --text-main:#f8fafc;
+            --text-dim:#94a3b8;
+            --accent:#38bdf8;           /* Neon cyan for interactions */
+            --accent-glow:rgba(56, 189, 248, 0.4);
+            --success:#34d399;
+            --error:#f87171;
+            
+            --font-main:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial, sans-serif;
+            --font-mono:"ui-monospace",SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+            --transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        * {box-sizing: border-box; margin: 0; padding: 0; }
+        body{
+            font-family:var(--font-main);
+            background-color:var(--bg-void);
+            /* Subtle interactive-looking background gradient */
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.04), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.04), transparent 25%);
+            color:var(--text-main);
+            line-height:1.5;
+            padding:2.5rem 1.5rem;
+            min-height:100vh;
+        }
+        /* Custom Scrollbar for a premium feel */
+        ::-webkit-scrollbar{width: 8px; height: 8px;}
+        ::-webkit-scrollbar-track{background: transparent;}
+        ::-webkit-scrollbar-thumb{background:var(--border-color);border-radius: 4px;}
+        ::-webkit-scrollbar-thumb:hover{background:var(--border-highlight);}
+
+        .wrapper{
+            max-width: 1200px;
+            margin:0 auto;
+            display:flex;
+            flex-direction:column;
+            gap:2rem;
+        }
+        header{text-align: center; padding-bottom: 1rem;}
+        h1{
+            font-size:2.5rem;
+            font-weight:800;
+            letter-spacing:-0.03em;
+            background:linear-gradient(to right,#f8fafc,#94a3b8);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+            margin-bottom:0.5rem;
+        }
+        .subtitle{font-size:1rem;color:var(--text-dim);}
+
+        .app-container{
+            display:grid;
+            grid-template-columns:360px 1fr;
+            gap:2rem;
+            align-items:start;
+        }
+        @media(max-width: 900px){
+            .app-container{grid-template-columns: 1fr;}
+        }
+        /* Glassmorphism Cards */
+        .card{
+            background:var(--surface);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter:blur(12px);
+            border:1px solid var(--border-color);
+            border-radius:16px;
+            box-shadow:0 8px 32px rgba(0, 0, 0, 0.4);
+            transition:var(--transition);
+        }
+        .card:hover{border-color:var(--border-highlight);}
+        .controls{
+            padding:2rem;
+            display:flex;
+            flex-direction:column;
+            gap:1.75rem;
+        }
+        .control-group{
+            display:flex;
+            flex-direction:column;
+            gap:0.75rem;
+        }
+        label{
+            font-size:0.75rem;
+            font-weight:600;
+            color:var(--text-dim);
+            text-transform:uppercase;
+            letter-spacing:0.1em;
+            display:flex;
+            justify-content:space-between;
+        }
+        /* Interactive File Drop Zone */
+        .drop-zone{
+            position:relative;
+            border:2px dashed var(--border-color);
+            border-radius:12px;
+            padding:2rem 1rem;
+            text-align: center;
+            cursor:pointer;
+            background:rgba(0,0,0,0.2);
+            transition:var(--transition);
+            overflow:hidden;
+        }
+        .drop-zone:hover,.drop-zone.drag-active {
+            border-color:var(--accent);
+            background:rgba(56, 189, 248, 0.05);
+            box-shadow:0 0 20px var(--accent-glow);
+        }
+        .drop-zone input[type="file"]{
+            position:absolute;
+            inset:0;
+            width: 100%;
+            height:100%;
+            opacity:0;
+            cursor:pointer;
+        }
+        .drop-zone-text{
+            color: var(--text-dim);
+            font-size:0.9rem;
+            transition:var(--transition);
+        }
+        .drop-zone:hover .drop-zone-text, .drop-zone.drag-active .drop-zone-text{
+            color:var(--accent);
+            transform:translateY(-2px);
+        }
+        /* Interactive Custom Range Slider */
+        input[type="range"]{
+            -webkit-appearance:none;
+            width:100%;
+            background:transparent;
+            height:24px;
+        }
+        input[type="range"]::-webkit-slider-runnable-track{
+            width:100%;
+            height:6px;
+            background:rgba(255,255,255,0.1);
+            border-radius:3px;
+            transition:var(--transition);
+        }
+        input[type="range"]:hover::-webkit-slider-runnable-track{
+            background:rgba(255,255,255,0.2);
+        }
+        input[type="range"]::-webkit-slider-thumb{
+            -webkit-appearance:none;
+            height:16px;
+            width:16px;
+            border-radius:50%;
+            background: var(--text-main);
+            margin-top:-5px;
+            cursor:grab;
+            box-shadow:0 0 10px rgba(0,0,0,0.5);
+            transition:var(--transition);
+        }
+        input[type="range"]::-webkit-slider-thumb:hover{
+            background:var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+            transform:scale(1.2);
+        }
+        input[type="range"]::-webkit-slider-thumb:active{
+            cursor:grabbing;
+            transform:scale(1.1);
+        }
+        /* Stylized Select Dropdown */
+        select{
+            appearance:none;
+            background-color:rgba(0,0,0,0.2);
+            color: var(--text-main);
+            border:1px solid var(--border-color);
+            padding:0.75rem 1rem;
+            font-family:var(--font-main);
+            font-size:0.9rem;
+            border-radius:8px;
+            cursor:pointer;
+            transition:var(--transition);
+            background-image:url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat:no-repeat;
+            background-position:right 1rem top 50%;
+            background-size:0.65rem auto;
+        }
+        select:hover{border-color:var(--border-highlight);background-color:rgba(255,255,255,0.05);}
+        select:focus{border-color:var(--accent);outline:none;box-shadow: 0 0 0 2px var(--accent-glow);}
+        select option{background-color:#0f172a;}/* Fix for native dropdown menu bg */
+        /* Interactive Button */
+        button{
+            background-color:var(--surface-hover);
+            color:var(--text-main);
+            border:1px solid var(--border-color);
+            padding:0.85rem;
+            font-family:var(--font-main);
+            font-size:0.95rem;
+            font-weight:600;
+            border-radius:8px;
+            cursor:pointer;
+            transition:var(--transition);
+            position:relative;
+            overflow:hidden;
+        }
+        button.primary-action{
+            background-color:rgba(56, 189, 248, 0.1);
+            color:var(--accent);
+            border-color:rgba(56, 189, 248, 0.3);
+            margin-top:0.5rem;
+        }
+        button.primary-action:hover{
+            background-color:var(--accent);
+            color:#000;
+            box-shadow:0 0 20px var(--accent-glow);
+            transform:translateY(-2px);
+        }
+        button.primary-action:active{transform: translateY(0);}
+        /* Output Viewport */
+        .output-panel{
+            display:flex;
+            flex-direction:column;
+            overflow:hidden;
+        }
+        .output-header{
+            padding:1rem 1.5rem;
+            background:rgba(0,0,0,0.2);
+            border-bottom: 1px solid var(--border-color);
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+        .output-header span{
+            font-size:0.75rem;
+            font-weight:600;
+            color:var(--text-dim);
+            letter-spacing:0.05em;
+            text-transform:uppercase;
+        }
+        .output-content{
+            background:#000; /* Pure black for maximum contrast with ASCII */
+            padding:2rem;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            flex-grow:1;
+            min-height:450px;
+            overflow:auto;
+            position:relative;
+        }
+        /* Subtle inner shadow overlay for the viewport */
+        .output-content::after{
+            content:'';
+            position:absolute;
+            inset:0;
+            pointer-events:none;
+            box-shadow:inset 0 0 30px rgba(0,0,0,0.8);
+        }
+        pre{
+            font-family:var(--font-mono);
+            font-size:6px;
+            line-height:6px;
+            letter-spacing:0;
+            white-space:pre;
+            color:rgba(255, 255, 255, 0.85); /* Slightly muted white for eye comfort */
+            tab-size:1;
+            user-select:all;
+            transition:opacity 0.3s ease;
+        }
+        .status{
+            text-align:center;
+            padding:0.5rem;
+            font-family:var(--font-mono);
+            font-size:0.8rem;
+            color:var(--text-dim);
+            transition:var(--transition);
+        }
+        .status.success{color: var(--success);text-shadow:0 0 10px rgba(52, 211, 153, 0.4);}
+        .status.error {color: var(--error);text-shadow:0 0 10px rgba(248, 113, 113, 0.4);}
+    </style>
+</head>
