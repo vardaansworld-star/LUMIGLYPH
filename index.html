@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"content="width=device-width, initial-scale=1.0">
+    <title>CharSketch - Interactive ASCII Engine</title>
+    <!-- Link to external stylesheet -->
+    <link rel="stylesheet"href="styles.css">
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Main Application Header -->
+        <header>
+            <h1>CharSketch</h1>
+            <p class="subtitle">Interactive ASCII Generation Engine</p>
+        </header>
+        <!-- Application Body Container -->
+        <main class="app-container">
+            <!-- Sidebar Controls Panel -->
+            <aside class="controls card">
+                <!-- Input Source: Drag and Drop Area -->
+                <div class="control-group">
+                    <label>Input Source</label>
+                    <div class="drop-zone" id="dropZoneContainer">
+                        <input type="file" id="filePicker" accept="image/*">
+                        <div class="drop-zone-text" id="dropZoneText">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 8px;">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            <br>Drag & drop image here<br>or click to browse
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fidelity/Resolution Slider -->
+                <div class="control-group">
+                    <label>Fidelity (Columns) <span id="lblWidth">150</span></label>
+                    <input type="range" id="paramWidth" min="50" max="400" step="10" value="150">
+                </div>
+
+                <!-- Character Ramp Selector -->
+                <div class="control-group">
+                    <label>Algorithmic Ramp</label>
+                    <select id="paramSet">
+                        <option value="detailed">Ultra-Detailed (Photographic)</option>
+                        <option value="simple">Minimalist (High Contrast)</option>
+                        <option value="blocks">Density Blocks (Shading)</option>
+                        <option value="binary">Binary Matrix (0 & 1)</option>
+                    </select>
+                </div>
+
+                <!-- Copy Action Button -->
+                <button class="primary-action" id="btnCopy">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 6px; margin-top: -2px;">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    Copy to Clipboard
+                </button>
+            </aside>
+
+            <!-- Main Render Output Viewport -->
+            <section class="output-panel card">
+                <div class="output-header">
+                    <span>Render Viewport</span>
+                    <span id="outputSize">0 x 0 MATRIX</span>
+                </div>
+                <div class="output-content">
+                    <pre id="output">SYSTEM IDLE. AWAITING IMAGE DATA.</pre>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Status Bar Footer -->
+        <footer class="status" id="status">System Ready.</footer>
+    </div>
+
+    <!-- Link to external JavaScript application logic -->
+    <script src="script.js"></script>
+</body>
+</html>
