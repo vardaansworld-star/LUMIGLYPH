@@ -6,9 +6,9 @@ A fast, zero-dependency web tool that converts images into ASCII art right in yo
 
 ##  Why I Built This
 
-I just wanted a quick, lightweight way to turn images into ASCII art without installing heavy software or navigating ad-bloated websites with slow upload times
+I just wanted a quick, lightweight way to turn images into ASCII art without installing heavy software or navigating ad-bloated websites with slow upload times 
 
-**CharSketch** runs 100% locally in your browser using standard HTML, CSS, and vanilla JavaScript. There are no frameworks,no external dependencies, and no backend servers—your photos never leave your computer
+**CharSketch** runs 100% locally in your browser using standard HTML, CSS, and vanilla JavaScript. There are no frameworks,no external dependencies, and no backend servers—your photos never leave your computer but u could also use and extension like liver server it is able to run everywheree
 
 ---
 
@@ -23,12 +23,3 @@ I just wanted a quick, lightweight way to turn images into ASCII art without ins
 *  **Live Resolution Control:** Adjust the character width slider to fine-tune the detail level on the fly.
 *  **One-Click Copy:** Instantly copy the generated ASCII text straight to your clipboard.
 
----
-
-##  Project Structure
-
-```text
-CharSketch/
-├── index.html    # Layout and app structure
-├── styles.css    # Dark mode styling and UI layout
-└── script.js     # HTML5 Canvas pixel math and ASCII logic
