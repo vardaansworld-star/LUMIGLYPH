@@ -283,3 +283,48 @@
         .status.error {color: var(--error);text-shadow:0 0 10px rgba(248, 113, 113, 0.4);}
     </style>
 </head>
+<body>
+    <div class="wrapper">
+        <header>
+            <h1>CharSetch</h1>
+            <p class="subtitle">Convert your photos into clean ASCII text art</p>
+        </header>
+
+        <main class="app-container">
+            <aside class="controls">
+                <div class="control-group">
+                    <label>Step 1:Pick a photo</label>
+                    <input type="file"id="filePicker" accept="image/*">
+                </div>
+                <div class="control-group">
+                    <label>Resolution(Width)<span id="paramWidth">150 columns</span></label>
+                    <input type="range"id="paraWidth"min="50"max="400"step="10"value="150">
+                </div>
+
+                <div class="control-group">
+                    <label>Character Set</label>
+                    <select id="paramSet">
+                        <option value="detailed">Detailed (best for photos)</option>
+                        <option value="simple">Simple(high contrast)</option>
+                        <option value="blocks">Blocks & Shades</option>
+                        <option value="alphanumeric">Letters & Numbers</option>
+                    </select>
+                </div>
+
+                <button class="primary-action" id="btnCopy">Copy text to clipboard</button>
+            </aside>
+
+            <section class="output-panel">
+                <div class="output-header">
+                    <span>Generated Sketch</span>
+                    <span id="outputSize">... x ...</span>
+                </div>
+
+                <div class="output-content">
+                    <pre id="output">Your ASCII sketch will appear here after you choose an image.</pre>
+                </div>
+            </section>
+        </main>
+        <footer class="status"id="status">Ready. Select an image to begin</footer>
+    </div>
+</body>
