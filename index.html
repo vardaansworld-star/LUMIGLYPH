@@ -327,4 +327,140 @@
         </main>
         <footer class="status"id="status">Ready. Select an image to begin</footer>
     </div>
+
+    <script>
+        let currentLoadedImage=null;
+
+        const asciiConverter={
+            characterSets:{
+                detailed:"$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ",
+                simple:"@%#*+=-:. ",
+                blocks:"█▓▒░ ",
+                alphanumeric:"W8O0QLCXzcunj1_-. "
+            },
+
+            convert(img,width,setKet){
+                const charSet=this.characterSets[setKey] || this.characterSets.detailed;
+                const aspectRatio=img.height/img.width;
+                const height=Math.floor(width*aspectRatio*0.55);
+
+                const canvas=document.createElement('canvas');
+                const ctx=canvas.getContext('2d',{willReadFrequently:true});
+                canvas,width=width;
+                canvas.height=height;
+
+                ctx.drawImage(img,0,0,width,height);
+
+                const imageData=ctx.getImageData(0,0,width,height);
+                const pixels=imageData.data;
+                let asiiStr="";
+
+                for(let y=0;y<height;y++){
+                    for(let x=0;x<width;x++){
+                        const index=(y*width+x)*4;
+
+                        const brightness=
+                            0.2126*pixels[index]+
+                            0.7152*pixels[index+1]+
+                            0.0722*pixels[index+2];
+                        
+                            const charIndex=Math.floor((brightness/255)*(charSet.length-1));
+                            asciiStr+=charSet[charIndex];
+                    }
+                    asciiStr+="\n";
+                }
+
+                return{
+                    asciiText:asciiStr,
+                    finalWidth:width,
+                    finalHeight: height
+                };
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded',()=>{
+            const elements={
+                file:document.getElementById('filePicker'),
+                width: document.getElementById('paramWidth'),
+                widthLabel:document.getElementById('lblWidth'),
+                set:document.getElementbyId('paramSet'),
+                output:document.getElementById('output'),
+                size:document.getElementById('outputSize'),
+                copy:document.getElementById('tnCopy'),
+                status:document.getElementById('status')
+            };
+            const setStatus=(msg,isError=false)=>{
+                elements.status.textContent=msg;
+                elements.status.className=isError ?'status error':'status';
+            };
+
+            const updateSketch=()=>{
+                if(!currentloadedImage) return;
+
+                setStatus("Working.....");
+                setTimeout(()=>{
+                    const width=parseInt(elements.width.value,10);
+                    const setKey=elements.set.value;
+
+                    try{
+                        const{asciiText,finalWidth,finalHeight}=
+                            asciiConverter.convert(currentLoadedImage,width,setKey);
+                        
+                            elements.output.textContent=asciiText;
+                            elements.size.textContent=`${finalWidth} cols x ${finalHeight}rows`;
+                            setStatus("Sketch complete.");
+                    } catch(err){
+                        console.error(err);
+                        setStatus("Error processing image.",true);
+                    }
+                },10);
+            };
+
+            elements.file.addEventListener('change',(e) =>{
+                const file=e.target.files[0];
+                if (!file)return;
+                setStatus("Loading image...");
+                elements.output.textContent ="Loading...";
+                elements.size.textContent="... x ...";
+
+                const reader=new FileReader();
+                reader.onload=(event) =>{
+                    const img =new Image();
+                    img.onload= ()=>{
+                        currentLoadedImage=img;
+                        updateSketch();
+                    };
+                    img.onerror=() =>setStatus("Error: Unable to open the image.",true);
+                    img.src=event.target.result;
+                };
+                reader.onerror=()=>setStatus("Error: Failed to read the file.",true);
+                reader.readAsDataURL(file);
+            });
+            elements.width.addEventListener('input',(e)=>{
+                elements.widthLabel.textContent=`${e.target.value}columns`;
+                updateSketch();
+            });
+            elements.set.addEventListener('change',updateSketch);
+            elements.copy.addEventListener('click',()=>{
+                const text=elements.output.textContent;
+                if(!currentLoadedImage || text.length<50){
+                    setStatus("Warning: No sketch to copy.", true);
+                    return;
+                }
+                navigator.clipboard.writeText(text).then(()=>{
+                    const originalText=elements.copy.textContent;
+                    elements.copy.textContent ="Copied!";
+                    elements.copy.style.backgroundColor ="#10b981";
+                    setTimeout(()=> {
+                        elements.copy.textContent=originalText;
+                        elements.copy.style.backgroundColor= "";
+                    },1500);
+                }).catch(err=>{
+                    console.error("Clipboard copy failed:",err);
+                    setStatus("Copy failed. Try selecting and copying manually",true);
+                });
+            });
+        });
+    </script>
 </body>
+</html>
